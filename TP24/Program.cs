@@ -39,8 +39,17 @@ app.UseAuthorization();
 
 using (var scope = app.Services.CreateScope())
 {
-    var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-    dataContext.Database.Migrate();
+    var serviceProvider = scope.ServiceProvider;
+
+    try
+    {
+        var dataContext = serviceProvider.GetRequiredService<DataContext>();
+        dataContext.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Database migration failed: " + ex.Message);
+    }
 }
 
 app.UseCors(x => x
